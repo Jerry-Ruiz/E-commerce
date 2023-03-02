@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import ProductCard from '../components/ProductCard'
+import ProductCard from '../components/Home/ProductCard'
 import { axiosEcommerce } from '../components/utils/configAxios'
 
 const Home = () => {

@@ -1,14 +1,19 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom'
+import ProductCard from '../components/Home/ProductCard';
 import { axiosEcommerce } from '../components/utils/configAxios';
+import { addProductCart } from '../store/slice/cart.slice';
 
 const Product = () => {
   const [product, setProduct] = useState();
   const [quantity, setQuantity] = useState(1);
-  // console.log(product)
+  const [similarProducts, setSimilarProducts] = useState([])
+  console.log(product?.categoryId)
 
   const { id } = useParams();
+
+  const dispatch = useDispatch()
 
   const handleLess = () => {
     const newQuantity = quantity - 1
@@ -19,11 +24,34 @@ const Product = () => {
 
   const handlePlus = () => setQuantity(quantity + 1)
 
+  const handleClickAddProduct = () => {
+    const data = {
+      quantity,
+      productId: product.id
+    }
+    dispatch(addProductCart(data))
+  };
+
   useEffect(() => {
     axiosEcommerce.get(`/products/${id}`)
       .then((res) => setProduct(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    if (product) {
+      axiosEcommerce.get(`/products?categoryId=${product?.categoryId}`)
+        .then((res) => {
+          const mewSimilarProducts = res.data.filter(productByCategory => productByCategory.id !== product.id)
+          setSimilarProducts(mewSimilarProducts)
+        })
+        .catch((err) => console.log(err))
+    }
+  }, [product])
+
+  useEffect(() => {
+    setQuantity(1)
+  }, [id])
 
   return (
     <main>
@@ -55,16 +83,19 @@ const Product = () => {
             </div>
           </div>
 
-          <button>
+          <button onClick={handleClickAddProduct}>
             Add to cart <i className='bx bx-cart'></i>
           </button>
           <p>{product?.description}</p>
         </section>
+      </section>
 
-        <section>
+      <h2>Dicover similar items</h2>
 
-        </section>
-
+      <section>
+        {
+          similarProducts.map((product) => (<ProductCard key={product.id} product={product} />))
+        }
       </section>
     </main>
   )

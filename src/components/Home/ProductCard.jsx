@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
-import { addProductCart } from '../store/slice/cart.slice';
+import { addProductCart } from '../../store/slice/cart.slice';
 
 const ProductCard = ({ product }) => {
 
@@ -10,7 +10,7 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch()
 
   const handleClickProduct = () => {
-    navigate(`/products/${product.id}}`)
+    navigate(`/products/${product.id}`)
   };
 
   const handleClickAddProduct = (e) => {
